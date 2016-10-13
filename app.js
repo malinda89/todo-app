@@ -29,7 +29,7 @@ router.route('/tasks')
   .post(function(req, res) {
 
     let task = new todoTask();
-    console.log(req);
+    console.log(req.query.name);
     task.name = 'hardcoded-task';
 
     //save task

@@ -3,12 +3,12 @@ $(function() {
   $.get('/tasks', (res) => {
     let list = $('#todo_list');
 
-    res.forEach(function(item) {
+    res.forEach((item) => {
       list.append('<li>'+ item.name +'</li>');
     })    
   });
 
-  $('#create_task').on('click', function() {
+  $('#create_task').on('click', () => {
     const parameters = {
       name: $('#task_name').val()
     };
