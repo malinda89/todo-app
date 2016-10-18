@@ -1,20 +1,50 @@
 $(function() {
 
-  $.get('/tasks', (res) => {
-    let list = $('#todo_list');
+  var taskList = [];
 
+  var addTaskToList = function(task) {
+    var list = $('#todo_list');
+    list.append('<input type="checkbox">' + task.name + '<br>');    
+  };
+
+  var deleteTasksFromList = function() {
+    //TODO
+  };
+
+  //Populate task list
+  $.get('/tasks', function(res) {
+    //Copy list, for later manipulations 
+    taskList = res;
+    
     res.forEach((item) => {
-      list.append('<li>'+ item.name +'</li>');
-    })    
+      addTaskToList(item);
+    });
   });
 
-  $('#create_task').on('click', () => {
-    const parameters = {
-      name: $('#task_name').val()
+  //Create new task
+  $('#create_task').on('click', function() {
+    var input = $('#task_name');
+
+    var data = {
+      name: input.val()
     };
 
-    $.post('/tasks', parameters, (res) => {
-      debugger;
-    }, 'json');
+    $.post('/tasks', data, (res) => {
+      var task = res.savedItem;
+      taskList.push(task);
+      addTaskToList(task);
+      input.val('');
+    });
   });
+
+  //Complete selected tasks
+  $('#complete_tasks').on('click', function() {
+    //TODO
+  });
+
+  //Delete selected tasks
+  $('#delete_tasks').on('click', function() {
+    //TODO
+  });
+
 });
