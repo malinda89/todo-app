@@ -16,7 +16,7 @@ $(function() {
     //Copy list, for later manipulations 
     taskList = res;
     
-    res.forEach((item) => {
+    res.forEach(function(item) {
       addTaskToList(item);
     });
   });
@@ -29,7 +29,7 @@ $(function() {
       name: input.val()
     };
 
-    $.post('/tasks', data, (res) => {
+    $.post('/tasks', data, function(res) {
       var task = res.savedItem;
       taskList.push(task);
       addTaskToList(task);
