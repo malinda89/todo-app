@@ -4,7 +4,11 @@ $(function() {
 
   var addTaskToList = function(task) {
     var list = $('#todo_list');
-    list.append('<input type="checkbox">' + task.name + '<br>');    
+    var item = $('<input type="checkbox">');
+    
+    item.attr('obj', JSON.stringify(task));
+    item.appendTo(list);
+    list.append(task.name+'<br>');
   };
 
   var deleteTasksFromList = function() {
@@ -39,7 +43,12 @@ $(function() {
 
   //Complete selected tasks
   $('#complete_tasks').on('click', function() {
-    //TODO
+    var taskArr = [];
+
+    $('#todo_list input:checked').each(function() {
+      taskArr.push(JSON.parse($(this).attr('obj')));
+    });
+
   });
 
   //Delete selected tasks
