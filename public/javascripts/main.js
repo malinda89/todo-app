@@ -1,18 +1,25 @@
 $(function() {
 
-  var taskList = [];
-
+  //Populate task list
   var addTaskToList = function(task) {
     var list = $('#todo_list');
-    list.append('<div><a class="delete-todo"><i class="glyphicon glyphicon-remove"></i></a>' +
-      '<input todoId="'+ task._id +'" class="check-todo" type="checkbox">'+ task.name +'</div>');
+
+    var elem = $('<div><a class="delete-todo"><i class="glyphicon glyphicon-remove"></i></a></div>')
+    .append(
+      $(document.createElement('input')).attr({
+        type: 'checkbox',
+        todoId: task._id,
+        class: 'check-todo',
+        checked: task.isCompleted
+      })
+    )
+    .append('<label>'+ task.name +'</label>');
+
+    list.append(elem);
   };
 
-  //Populate task list
+  //Get all tasks
   $.get('/tasks', function(res) {
-    //Copy list, for later manipulations 
-    taskList = res;
-
     res.forEach(function(item) {
       addTaskToList(item);
     });
@@ -28,7 +35,6 @@ $(function() {
 
     $.post('/tasks', data, function(res) {
       var task = res.savedItem;
-      taskList.push(task);
       addTaskToList(task);
       input.val('');
     });
@@ -36,10 +42,16 @@ $(function() {
 
   //Complete todos
   $(document).on('change', '.check-todo', function() {
-    var data = JSON.parse($(this).attr('obj'));
+    var todoId = $(this).attr('todoid');
     
-    $.post('/tasks', data, function(res) {
-      debugger;
+    $.ajax({
+      url: '/tasks' + '?' + $.param({'id': todoId}),
+      type: 'PUT',
+      success: function(res) {
+        if (res.success) {
+          alert('Todo updated successfully');
+        }
+      }
     });
   });
 
