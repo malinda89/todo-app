@@ -14,7 +14,7 @@ app
   .use('/', router);
 
 //Establish DB connection
-mongoose.connect('mongodb://mongo:mongo99@ds053176.mlab.com:53176/db-todo', function(err) {
+mongoose.connect('mongodb://mongo:mongo99@ds053176.mlab.com:53176/db-todo', (err) => {
   if (err) {
     console.log('Cannot connect to DB, Error: ' + err);
   } else {
@@ -24,13 +24,13 @@ mongoose.connect('mongodb://mongo:mongo99@ds053176.mlab.com:53176/db-todo', func
 
 //Register api routes
 router.route('/tasks')
-.post(function(req, res) {
+.post((req, res) => {
   const task = new todoTask();
   console.log(req.body);
   task.name = req.body.name;
 
   //save task
-  task.save(function(err, task) {
+  task.save((err, task) => {
     if (err) {
       console.log('Task creation unsuccessful! Error: ' + err);
       res.send(err);
@@ -43,15 +43,33 @@ router.route('/tasks')
   });
 })
 
-.get(function(req, res) {
+.get((req, res) => {
   //get tasks
-  todoTask.find(function(err, tasks) {
+  todoTask.find((err, tasks) => {
     if (err) {
       console.log('Cannot retrieve tasks! Error: ' + err);
       res.send(err);
     }
 
     res.json(tasks);
+  });
+})
+
+.delete((req, res) => {
+  console.log(req.query);
+
+  todoTask.findByIdAndRemove(req.query.id, (err, todo) => {
+    if (err) {
+      console.log('Cannot delete task! Error: ' + err);
+      res.send(err);
+    }
+
+    var response = {
+      success: true,
+      id: todo._id
+    };
+
+    res.send(response);
   });
 });
 

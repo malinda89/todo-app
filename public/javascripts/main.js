@@ -4,22 +4,15 @@ $(function() {
 
   var addTaskToList = function(task) {
     var list = $('#todo_list');
-    var item = $('<input type="checkbox">');
-    
-    item.attr('obj', JSON.stringify(task));
-    item.appendTo(list);
-    list.append(task.name+'<br>');
-  };
-
-  var deleteTasksFromList = function() {
-    //TODO
+    list.append('<div><a class="delete-todo"><i class="glyphicon glyphicon-remove"></i></a>' +
+      '<input todoId="'+ task._id +'" class="check-todo" type="checkbox">'+ task.name +'</div>');
   };
 
   //Populate task list
   $.get('/tasks', function(res) {
     //Copy list, for later manipulations 
     taskList = res;
-    
+
     res.forEach(function(item) {
       addTaskToList(item);
     });
@@ -41,19 +34,29 @@ $(function() {
     });
   });
 
-  //Complete selected tasks
-  $('#complete_tasks').on('click', function() {
-    var taskArr = [];
-
-    $('#todo_list input:checked').each(function() {
-      taskArr.push(JSON.parse($(this).attr('obj')));
+  //Complete todos
+  $(document).on('change', '.check-todo', function() {
+    var data = JSON.parse($(this).attr('obj'));
+    
+    $.post('/tasks', data, function(res) {
+      debugger;
     });
-
   });
 
-  //Delete selected tasks
-  $('#delete_tasks').on('click', function() {
-    //TODO
+  //Delete todos
+  $(document).on('click', '.delete-todo', function() {
+    var todoId = $(this).next().attr('todoid');
+    
+    $.ajax({
+      url: '/tasks' + '?' + $.param({'id': todoId}),
+      type: 'DELETE',
+      success: function(res) {
+        if (res.success) {
+          $($.find('input:checkbox[todoid='+ res.id +']')).closest('div').remove();
+          alert('Todo deleted successfully');
+        }
+      }
+    });
   });
 
 });
